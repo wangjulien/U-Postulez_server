@@ -1,0 +1,8 @@
+keytool -genkeypair -alias tomcat -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore keystore.p12 -validity 3650
+
+keytool -list -v -storetype pkcs12 -keystore keystore.p12
+
+keytool -export -keystore keystore.jks -alias tomcat -file myCertificate.crt
+
+
+keytool -import -alias tomcat -file myCertificate.crt -keystore keystore.p12 -storepass password
