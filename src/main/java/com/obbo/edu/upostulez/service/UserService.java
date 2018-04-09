@@ -2,6 +2,8 @@ package com.obbo.edu.upostulez.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.obbo.edu.upostulez.domain.User;
 import com.obbo.edu.upostulez.domain.UserDto;
@@ -10,7 +12,9 @@ import com.obbo.edu.upostulez.protocol.DbEntityProtocol.RoleName;
 import com.obbo.edu.upostulez.repository.RoleRepository;
 import com.obbo.edu.upostulez.repository.UserRepository;
 
-public class UserServiceImpl implements IUserService {
+@Service
+@Transactional
+public class UserService implements IUserService {
 	
 	@Autowired
 	private RoleRepository roleRepository;

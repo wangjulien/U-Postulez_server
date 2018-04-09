@@ -34,15 +34,15 @@ import com.obbo.edu.upostulez.ConstantsConfig;
 @EnableWebSecurity
 @ComponentScan(basePackageClasses = CustomUserDetailsService.class)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-	
+
 	@Value("${security.cors.permit-host}")
 	private String corsPermitHost;
-	
+
 	private static final String HTTP = "http://";
 	private static final String HTTPS = "https://";
 	private static final String DEV_PORT = ":4200";
 	private static final String HTTPS_PORT = ":443";
-	
+
 	@Autowired
 	UserDetailsService customUserDetailsService;
 
@@ -70,14 +70,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration corsConf = new CorsConfiguration();
-		corsConf.setAllowedOrigins(Arrays.asList(
-										HTTP + corsPermitHost + DEV_PORT, 
-										HTTPS + corsPermitHost, 
-										HTTPS + corsPermitHost + HTTPS_PORT));
-		corsConf.setAllowedMethods(Arrays.asList(
-										HttpMethod.GET.toString(),
-										HttpMethod.POST.toString(),
-										HttpMethod.DELETE.toString()));
+		corsConf.setAllowedOrigins(Arrays.asList(HTTP + corsPermitHost + DEV_PORT, HTTPS + corsPermitHost,
+				HTTPS + corsPermitHost + HTTPS_PORT));
+		corsConf.setAllowedMethods(
+				Arrays.asList(HttpMethod.GET.toString(), HttpMethod.POST.toString(), HttpMethod.DELETE.toString()));
 		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", corsConf);
 		return source;
