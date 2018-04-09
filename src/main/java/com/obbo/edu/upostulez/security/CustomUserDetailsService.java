@@ -1,7 +1,10 @@
 package com.obbo.edu.upostulez.security;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,12 +17,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.obbo.edu.upostulez.domain.Privilege;
 import com.obbo.edu.upostulez.domain.Role;
 import com.obbo.edu.upostulez.domain.User;
+import com.obbo.edu.upostulez.protocol.DbEntityProtocol.PrivilegeName;
 import com.obbo.edu.upostulez.repository.UserRepository;
 
 /**
- * Classe implements UserDetailsService (Spring Security) pour offrir se logger a partir user dans DB
+ * Classe implements UserDetailsService (Spring Security) pour offrir se logger
+ * a partir user dans DB
  * 
  * @author JW
  *
@@ -27,32 +33,50 @@ import com.obbo.edu.upostulez.repository.UserRepository;
 @Component
 public class CustomUserDetailsService implements UserDetailsService {
 
-	private static final Logger LOGGER =  LoggerFactory.getLogger(CustomUserDetailsService.class);
-	
-	
-	@Autowired
-    private UserRepository userRepo;
-	
-    @Override
-    @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-    	
-    	User user = userRepo.findByEmail(email);
-    	
-    	LOGGER.info("Utilisateur login ", email);
-		if(user == null){
-			LOGGER.error("L'utilisateur non trouve");
-			throw new UsernameNotFoundException("L'utilisateur non trouve par email " + email);
-		}
-				
-		Set<GrantedAuthority> setAuths = new HashSet<GrantedAuthority>();
+	private static final Logger LOGGER = LoggerFactory.getLogger(CustomUserDetailsService.class);
 
-		// Build user's authorities
-		for (Role role : user.getRoles()) {
-			setAuths.add(new SimpleGrantedAuthority(role.toString()));
-		}
-		
+	@Autowired
+	private UserRepository userRepo;
+
+	@Override
+	@Transactional(readOnly = true)
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
+		Optional<User> optUser = userRepo.findByEmail(email);
+
+		LOGGER.info("Utilisateur login ", email);
+
+		User user = optUser.orElseThrow(() -> {
+			String msg = "L'utilisateur non trouve par email " + email;
+			LOGGER.error(msg);
+			return new UsernameNotFoundException(msg);
+		});
+
 		LOGGER.info("Utilisateur trouve de DB ", user.getFirstName() + " " + user.getLastName());
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), setAuths);
-    }
+		return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
+				getAuthorities(user.getRoles()));
+	}
+
+	private Collection<? extends GrantedAuthority> getAuthorities(Set<Role> roles) {
+
+		return getGrantedAuthorities(getPrivileges(roles));
+	}
+
+	private Set<PrivilegeName> getPrivileges(Set<Role> roles) {
+
+		Set<Privilege> allPrivileges = new HashSet<>();
+		for (Role role : roles) {
+			allPrivileges.addAll(role.getPrivileges());
+		}
+
+		return allPrivileges.stream().map(Privilege::getName).collect(Collectors.toSet());
+	}
+
+	private Set<GrantedAuthority> getGrantedAuthorities(Set<PrivilegeName> privileges) {
+		Set<GrantedAuthority> authorities = new HashSet<>();
+		for (PrivilegeName privilege : privileges) {
+			authorities.add(new SimpleGrantedAuthority(privilege.toString()));
+		}
+		return authorities;
+	}
 }
