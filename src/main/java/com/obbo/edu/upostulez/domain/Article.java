@@ -2,6 +2,7 @@ package com.obbo.edu.upostulez.domain;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,6 +23,16 @@ public class Article implements Serializable {
 	private Long id;
 
 	private String name;
+	
+	private String jianTiCi;
+	private String fanTiCi;
+	private String pinYin;
+	
+	@Column(columnDefinition = "TEXT")
+	private String jianTiShiYi;
+	private String liJu;
+	private String yingYuDuiYingCiJu;
+	
 
 	public Article() {
 		super();
@@ -41,6 +52,54 @@ public class Article implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public String getJianTiCi() {
+		return jianTiCi;
+	}
+
+	public void setJianTiCi(String jianTiCi) {
+		this.jianTiCi = jianTiCi;
+	}
+
+	public String getFanTiCi() {
+		return fanTiCi;
+	}
+
+	public void setFanTiCi(String fanTiCi) {
+		this.fanTiCi = fanTiCi;
+	}
+
+	public String getPinYin() {
+		return pinYin;
+	}
+
+	public void setPinYin(String pinYin) {
+		this.pinYin = pinYin;
+	}
+
+	public String getJianTiShiYi() {
+		return jianTiShiYi;
+	}
+
+	public void setJianTiShiYi(String jianTiShiYi) {
+		this.jianTiShiYi = jianTiShiYi;
+	}
+
+	public String getLiJu() {
+		return liJu;
+	}
+
+	public void setLiJu(String liJu) {
+		this.liJu = liJu;
+	}
+
+	public String getYingYuDuiYingCiJu() {
+		return yingYuDuiYingCiJu;
+	}
+
+	public void setYingYuDuiYingCiJu(String yingYuDuiYingCiJu) {
+		this.yingYuDuiYingCiJu = yingYuDuiYingCiJu;
 	}
 
 	@Override

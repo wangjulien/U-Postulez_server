@@ -44,15 +44,15 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 		Optional<User> optUser = userRepo.findByEmail(email);
 
-		LOGGER.info("Utilisateur login ", email);
+		LOGGER.info("User login with email : ", email);
 
 		User user = optUser.orElseThrow(() -> {
-			String msg = "L'utilisateur non trouve par email " + email;
+			String msg = "User can not be found by the email " + email;
 			LOGGER.error(msg);
 			return new UsernameNotFoundException(msg);
 		});
 
-		LOGGER.info("Utilisateur trouve de DB ", user.getFirstName() + " " + user.getLastName());
+		LOGGER.info("User found in the DB ", user.getFirstName() + " " + user.getLastName());
 		return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
 				getAuthorities(user.getRoles()));
 	}

@@ -1,5 +1,6 @@
 package com.obbo.edu.upostulez.domain;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -23,7 +24,7 @@ public class Privilege {
     private PrivilegeName name;
  
     @ManyToMany(mappedBy = "privileges")
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<>();
     
     public Privilege() {
 		super();

@@ -11,7 +11,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-public abstract class AbstractService<T extends Serializable> implements IOperations<T> {
+public abstract class AbstractService<T extends Serializable> implements ICrudService<T> {
 
     // read - one
 

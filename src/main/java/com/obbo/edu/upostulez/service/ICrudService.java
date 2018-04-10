@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 
-public interface IOperations<T extends Serializable> {
+public interface ICrudService<T extends Serializable> {
 	
 	// read - one
 

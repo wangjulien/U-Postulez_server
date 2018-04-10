@@ -1,5 +1,6 @@
 package com.obbo.edu.upostulez.domain;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -32,7 +33,7 @@ public class Role {
     private RoleName name;
     
     @ManyToMany(mappedBy = "roles")
-    private Set<User> users;
+    private Set<User> users = new HashSet<>();
  
     @ManyToMany
     @JoinTable(name = "roles_privileges", 

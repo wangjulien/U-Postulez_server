@@ -53,12 +53,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.cors().and().csrf().disable().authorizeRequests().antMatchers(HttpMethod.POST, ConstantsConfig.SIGN_UP_URL)
-				.permitAll().anyRequest().authenticated().and()
-				.addFilter(new JWTAuthenticationFilter(authenticationManager()))
-				.addFilter(new JWTAuthorizationFilter(authenticationManager()))
-				// this disables session creation on Spring Security
-				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		http.cors().and().csrf().disable()
+			.authorizeRequests()
+			.antMatchers(HttpMethod.POST, ConstantsConfig.SIGN_UP_URL).permitAll()
+			.anyRequest().authenticated()
+			.and()
+			.addFilter(new JWTAuthenticationFilter(authenticationManager()))
+			.addFilter(new JWTAuthorizationFilter(authenticationManager()))
+			// this disables session creation on Spring Security
+			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
 
 	@Bean
@@ -72,6 +75,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		CorsConfiguration corsConf = new CorsConfiguration();
 		corsConf.setAllowedOrigins(Arrays.asList(HTTP + corsPermitHost + DEV_PORT, HTTPS + corsPermitHost,
 				HTTPS + corsPermitHost + HTTPS_PORT));
+		// Dev Option
+		corsConf.addAllowedOrigin("*");
 		corsConf.setAllowedMethods(
 				Arrays.asList(HttpMethod.GET.toString(), HttpMethod.POST.toString(), HttpMethod.DELETE.toString()));
 		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

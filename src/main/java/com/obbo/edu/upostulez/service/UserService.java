@@ -1,12 +1,12 @@
 package com.obbo.edu.upostulez.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.obbo.edu.upostulez.domain.User;
-import com.obbo.edu.upostulez.domain.UserDto;
 import com.obbo.edu.upostulez.exception.UserAlreadyExistException;
 import com.obbo.edu.upostulez.protocol.DbEntityProtocol.RoleName;
 import com.obbo.edu.upostulez.repository.RoleRepository;
@@ -14,7 +14,7 @@ import com.obbo.edu.upostulez.repository.UserRepository;
 
 @Service
 @Transactional
-public class UserService implements IUserService {
+public class UserService extends AbstractService<User> implements IUserService {
 	
 	@Autowired
 	private RoleRepository roleRepository;
@@ -26,20 +26,20 @@ public class UserService implements IUserService {
 	private PasswordEncoder passwordEncoder;
 	
 	@Override
-	public User registerNewUserAccount(UserDto accountDto) throws UserAlreadyExistException {
-	  
-	    if (userRepository.findByEmail(accountDto.getEmail()).isPresent()) {
-	        throw new UserAlreadyExistException
-	          ("There is an account with that email adress: " + accountDto.getEmail());
-	    }
-	    User user = new User();
-	 
-	    user.setFirstName(accountDto.getFirstName());
-	    user.setLastName(accountDto.getLastName());
-	    user.setPassword(passwordEncoder.encode(accountDto.getPassword()));
-	    user.setEmail(accountDto.getEmail());
-	 
-	    user.addRole(roleRepository.findByName(RoleName.ROLE_USER).get());
-	    return userRepository.save(user);
+	protected PagingAndSortingRepository<User, Long> getDao() {
+		return userRepository;
 	}
+	
+	@Override
+	public User registerNewUserAccount(User newUser) throws UserAlreadyExistException {
+	  
+	    if (userRepository.findByEmail(newUser.getEmail()).isPresent()) {
+	        throw new UserAlreadyExistException
+	          ("There is an account with that email adress: " + newUser.getEmail());
+	    }
+	    
+	    newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+	    newUser.addRole(roleRepository.findByName(RoleName.ROLE_USER).get());
+	    return userRepository.save(newUser);
+	}	
 }

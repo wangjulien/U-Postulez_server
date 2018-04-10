@@ -1,6 +1,7 @@
 package com.obbo.edu.upostulez.domain;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -42,7 +43,7 @@ public class User implements Serializable {
 	private String lastName;
 
 	@Embedded
-	private Adresse adresse;
+	private Address address;
 
 	@Column(unique = true)
 	private String email;
@@ -50,7 +51,7 @@ public class User implements Serializable {
 
 	@ManyToMany
 	@JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
-	private Set<Role> roles;
+	private Set<Role> roles = new HashSet<>();
 
 	public User() {
 		super();
@@ -80,12 +81,12 @@ public class User implements Serializable {
 		this.lastName = lastName;
 	}
 
-	public Adresse getAdresse() {
-		return adresse;
+	public Address getAddress() {
+		return address;
 	}
 
-	public void setAdresse(Adresse adresse) {
-		this.adresse = adresse;
+	public void setAddress(Address address) {
+		this.address = address;
 	}
 
 	public String getEmail() {

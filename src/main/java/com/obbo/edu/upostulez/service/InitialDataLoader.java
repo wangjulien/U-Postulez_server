@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.obbo.edu.upostulez.domain.Address;
 import com.obbo.edu.upostulez.domain.Privilege;
 import com.obbo.edu.upostulez.domain.Role;
 import com.obbo.edu.upostulez.domain.User;
@@ -49,10 +50,10 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		Privilege writePrivilege = createPrivilegeIfNotFound(PrivilegeName.WRITE_PRIVILEGE);
 
 		Set<Privilege> adminPrivileges = Stream.of(readPrivilege, writePrivilege).collect(Collectors.toSet());
-		Set<Privilege> userPrivileges = Stream.of(readPrivilege).collect(Collectors.toSet());
+//		Set<Privilege> userPrivileges = Stream.of(readPrivilege).collect(Collectors.toSet());
 				
 		Role adminRole = createRoleIfNotFound(RoleName.ROLE_ADMIN, adminPrivileges);
-		Role userRole = createRoleIfNotFound(RoleName.ROLE_USER, userPrivileges);
+//		Role userRole = createRoleIfNotFound(RoleName.ROLE_USER, userPrivileges);
 
 		User user = new User();
 		user.setFirstName("Admin");
@@ -60,6 +61,8 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		user.setEmail("test@test.com");
 		user.setPassword(passwordEncoder.encode("test"));
 		user.addRole(adminRole);
+		user.setAddress(new Address("Paris", 75001, "IdF", "0123456789"));
+		
 		userRepository.save(user);
 
 		alreadySetup = true;
