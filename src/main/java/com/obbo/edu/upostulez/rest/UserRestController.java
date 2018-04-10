@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.obbo.edu.upostulez.domain.User;
-import com.obbo.edu.upostulez.exception.DaoException;
+import com.obbo.edu.upostulez.exception.UserNotFoundException;
 import com.obbo.edu.upostulez.service.IUserService;
 
 /**
@@ -50,11 +50,11 @@ public class UserRestController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<User> findUserById(@PathVariable(value = "id") Long userId) throws DaoException {
+	public ResponseEntity<User> findUserById(@PathVariable(value = "id") Long userId) {
 		LOGGER.info("Find a user by the id : " + userId);
 
 		User foundUser = userService.findById(userId)
-				.orElseThrow(() -> new DaoException("User with id : " + userId + " is not found"));
+				.orElseThrow(() -> new UserNotFoundException("User with id : " + userId + " is not found"));
 
 		LOGGER.info("User found : " + foundUser.getFirstName() + " " + foundUser.getLastName());
 

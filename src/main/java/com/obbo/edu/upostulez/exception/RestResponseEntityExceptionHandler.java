@@ -5,6 +5,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -46,39 +47,39 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 		return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 	}
 
-	// @ExceptionHandler({ InvalidOldPasswordException.class })
-	// public ResponseEntity<Object> handleInvalidOldPassword(final RuntimeException
-	// ex, final WebRequest request) {
-	// logger.error("400 Status Code", ex);
-	// final GenericResponse bodyOfResponse = new
-	// GenericResponse(messages.getMessage("message.invalidOldPassword", null,
-	// request.getLocale()), "InvalidOldPassword");
-	// return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(),
-	// HttpStatus.BAD_REQUEST, request);
-	// }
-	//
-	// @ExceptionHandler({ ReCaptchaInvalidException.class })
-	// public ResponseEntity<Object> handleReCaptchaInvalid(final RuntimeException
-	// ex, final WebRequest request) {
-	// logger.error("400 Status Code", ex);
-	// final GenericResponse bodyOfResponse = new
-	// GenericResponse(messages.getMessage("message.invalidReCaptcha", null,
-	// request.getLocale()), "InvalidReCaptcha");
-	// return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(),
-	// HttpStatus.BAD_REQUEST, request);
-	// }
-	//
-	// // 404
-	// @ExceptionHandler({ UserNotFoundException.class })
-	// public ResponseEntity<Object> handleUserNotFound(final RuntimeException ex,
-	// final WebRequest request) {
-	// logger.error("404 Status Code", ex);
-	// final GenericResponse bodyOfResponse = new
-	// GenericResponse(messages.getMessage("message.userNotFound", null,
-	// request.getLocale()), "UserNotFound");
-	// return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(),
-	// HttpStatus.NOT_FOUND, request);
-	// }
+	@ExceptionHandler({ AccessDeniedException.class })
+    public ResponseEntity<Object> handleAccessDeniedException(Exception ex, WebRequest request) {
+		logger.error("403 Status Code", ex);
+		final GenericResponse bodyOfResponse = new GenericResponse(
+				messages.getMessage("message.accessDenied", null, request.getLocale()), "AccessDenied");
+		return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
+    }
+
+//	@ExceptionHandler({ InvalidOldPasswordException.class })
+//	public ResponseEntity<Object> handleInvalidOldPassword(final RuntimeException ex, final WebRequest request) {
+//		logger.error("400 Status Code", ex);
+//		final GenericResponse bodyOfResponse = new GenericResponse(
+//				messages.getMessage("message.invalidOldPassword", null, request.getLocale()), "InvalidOldPassword");
+//		return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+//	}
+//
+//	@ExceptionHandler({ ReCaptchaInvalidException.class })
+//	public ResponseEntity<Object> handleReCaptchaInvalid(final RuntimeException ex, final WebRequest request) {
+//		logger.error("400 Status Code", ex);
+//		final GenericResponse bodyOfResponse = new GenericResponse(
+//				messages.getMessage("message.invalidReCaptcha", null, request.getLocale()), "InvalidReCaptcha");
+//		return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+//	}
+//
+	// 404
+	@ExceptionHandler({ UserNotFoundException.class, ResourceNotFoundException.class })
+	public ResponseEntity<Object> handleUserNotFound(final RuntimeException ex, final WebRequest request) {
+		logger.error("404 Status Code", ex);
+		final GenericResponse bodyOfResponse = new GenericResponse(
+				messages.getMessage("message.userNotFound", null, request.getLocale()), "ResourceNotFound");
+		return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+	}
+
 
 	// 409
 	@ExceptionHandler({ UserAlreadyExistException.class })

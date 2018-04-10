@@ -1,4 +1,4 @@
-package com.obbo.edu.upostulez.service;
+package com.obbo.edu.upostulez;
 
 import java.util.Optional;
 import java.util.Set;
@@ -23,7 +23,7 @@ import com.obbo.edu.upostulez.repository.RoleRepository;
 import com.obbo.edu.upostulez.repository.UserRepository;
 
 @Component
-public class InitialDataLoader implements ApplicationListener<ContextRefreshedEvent> {
+public class SetupDataLoader implements ApplicationListener<ContextRefreshedEvent> {
 
 	private boolean alreadySetup = false;
 
