@@ -36,7 +36,7 @@ import com.obbo.edu.upostulez.service.IUserService;
  */
 
 @RestController
-@RequestMapping("/u-postulez")
+@RequestMapping("/users")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 public class UserRestController {
 
@@ -49,7 +49,7 @@ public class UserRestController {
 		super();
 	}
 
-	@GetMapping("/users/{id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<User> findUserById(@PathVariable(value = "id") Long userId) throws DaoException {
 		LOGGER.info("Find a user by the id : " + userId);
 
@@ -69,7 +69,7 @@ public class UserRestController {
 	 * @throws Exception
 	 *             Exception
 	 */
-	@PostMapping("/users")
+	@PostMapping()
 	public ResponseEntity<User> addUser(@Valid @RequestBody User user) {
 		LOGGER.info("New User to create : Id=" + user.getId() + " " + user.getFirstName() + " " + user.getLastName());
 
@@ -89,7 +89,7 @@ public class UserRestController {
 	 * @throws Exception
 	 *             Exception
 	 */
-	@PutMapping("/users")
+	@PutMapping()
 	public ResponseEntity<User> updateUser(@Valid @RequestBody User user) {
 
 		LOGGER.info("User to update : Id=" + user.getId() + " " + user.getFirstName() + " " + user.getLastName());
@@ -109,7 +109,7 @@ public class UserRestController {
 	 * @throws Exception
 	 *             Exception
 	 */
-	@DeleteMapping("/users/{id}")
+	@DeleteMapping("/{id}")
 	public void supprimerUser(@PathVariable(value = "id") Long userId) {
 		LOGGER.info("User to delete : Id=" + userId);
 
@@ -123,7 +123,7 @@ public class UserRestController {
 	 * @throws Exception
 	 *             Exception
 	 */
-	@GetMapping("/users")
+	@GetMapping()
 	public ResponseEntity<List<User>> getAllUsers() {
 		List<User> clis = userService.findAll();
 

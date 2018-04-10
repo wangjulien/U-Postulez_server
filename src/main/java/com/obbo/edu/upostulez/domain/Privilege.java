@@ -1,15 +1,11 @@
 package com.obbo.edu.upostulez.domain;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 
 import com.obbo.edu.upostulez.protocol.DbEntityProtocol.PrivilegeName;
 
@@ -23,8 +19,8 @@ public class Privilege {
     @Enumerated(EnumType.STRING)
     private PrivilegeName name;
  
-    @ManyToMany(mappedBy = "privileges")
-    private Set<Role> roles = new HashSet<>();
+//    @ManyToMany(mappedBy = "privileges")
+//    private Set<Role> roles = new HashSet<>();
     
     public Privilege() {
 		super();
@@ -51,11 +47,11 @@ public class Privilege {
 		this.name = name;
 	}
 
-	public Set<Role> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(Set<Role> roles) {
-		this.roles = roles;
-	}   
+//	public Set<Role> getRoles() {
+//		return roles;
+//	}
+//
+//	public void setRoles(Set<Role> roles) {
+//		this.roles = roles;
+//	}   
 }

@@ -1,6 +1,5 @@
 package com.obbo.edu.upostulez.domain;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -32,8 +31,8 @@ public class Role {
     @Enumerated(EnumType.STRING)
     private RoleName name;
     
-    @ManyToMany(mappedBy = "roles")
-    private Set<User> users = new HashSet<>();
+//    @ManyToMany(mappedBy = "roles")
+//    private Set<User> users = new HashSet<>();
  
     @ManyToMany
     @JoinTable(name = "roles_privileges", 
@@ -66,17 +65,17 @@ public class Role {
 		this.name = name;
 	}
 	
-	public void addUser(User user) {
-		this.users.add(user);
-	}
-	
-	public Set<User> getUsers() {
-		return users;
-	}
-
-	public void setUsers(Set<User> users) {
-		this.users = users;
-	}
+//	public void addUser(User user) {
+//		this.users.add(user);
+//	}
+//	
+//	public Set<User> getUsers() {
+//		return users;
+//	}
+//
+//	public void setUsers(Set<User> users) {
+//		this.users = users;
+//	}
 
 	public Set<Privilege> getPrivileges() {
 		return privileges;

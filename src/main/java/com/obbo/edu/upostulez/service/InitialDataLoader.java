@@ -63,7 +63,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 		user.addRole(adminRole);
 		user.setAddress(new Address("Paris", 75001, "IdF", "0123456789"));
 		
-		userRepository.save(user);
+		createUserIfNotFound(user);
 
 		alreadySetup = true;
 	}
@@ -86,5 +86,13 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 			role.setPrivileges(privileges);
 			return roleRepository.save(role);
 		});
+	}
+	
+	@Transactional
+	private User createUserIfNotFound(User newUser) {
+
+		Optional<User> optUser = userRepository.findByEmail(newUser.getEmail());
+
+		return optUser.orElseGet(() -> userRepository.save(newUser));
 	}
 }

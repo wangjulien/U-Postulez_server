@@ -106,7 +106,7 @@ public class User implements Serializable {
 	}
 
 	public void addRole(Role role) {
-		role.addUser(this);
+//		role.addUser(this);
 		this.roles.add(role);
 	}
 

@@ -16,6 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -56,7 +57,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.cors().and().csrf().disable()
 			.authorizeRequests()
 			.antMatchers(HttpMethod.POST, ConstantsConfig.SIGN_UP_URL).permitAll()
+//			.antMatchers(HttpMethod.POST, ConstantsConfig.LOGIN_URL).permitAll()
 			.anyRequest().authenticated()
+			.and()
+			.logout()
+				.logoutUrl("/logout")
+				.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
 			.and()
 			.addFilter(new JWTAuthenticationFilter(authenticationManager()))
 			.addFilter(new JWTAuthorizationFilter(authenticationManager()))

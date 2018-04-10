@@ -36,7 +36,7 @@ import com.obbo.edu.upostulez.service.IArticleService;
  */
 
 @RestController
-@RequestMapping("/u-postulez")
+@RequestMapping("/articles")
 @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
 public class ArticleRestController {
 
@@ -49,7 +49,7 @@ public class ArticleRestController {
 		super();
 	}
 
-	@GetMapping("/articles/{id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<Article> findArticleById(@PathVariable(value = "id") Long articleId) throws DaoException {
 		LOGGER.info("Find a article by the id : " + articleId);
 
@@ -69,7 +69,7 @@ public class ArticleRestController {
 	 * @throws Exception
 	 *             Exception
 	 */
-	@PostMapping("/articles")
+	@PostMapping()
 	public ResponseEntity<Article> addArticle(@Valid @RequestBody Article article) {
 		LOGGER.info("New Article to create : Id=" + article.getId() + " " + article.getName() + " " + article.getJianTiCi());
 
@@ -89,7 +89,7 @@ public class ArticleRestController {
 	 * @throws Exception
 	 *             Exception
 	 */
-	@PutMapping("/articles")
+	@PutMapping()
 	public ResponseEntity<Article> updateArticle(@Valid @RequestBody Article article) {
 
 		LOGGER.info("Article to update : Id=" + article.getId() + " " + article.getName() + " " + article.getJianTiCi());
@@ -109,7 +109,7 @@ public class ArticleRestController {
 	 * @throws Exception
 	 *             Exception
 	 */
-	@DeleteMapping("/articles/{id}")
+	@DeleteMapping("/{id}")
 	public void supprimerArticle(@PathVariable(value = "id") Long articleId) {
 		LOGGER.info("Article to delete : Id=" + articleId);
 
@@ -123,7 +123,7 @@ public class ArticleRestController {
 	 * @throws Exception
 	 *             Exception
 	 */
-	@GetMapping("/articles")
+	@GetMapping()
 	public ResponseEntity<List<Article>> getAllArticles() {
 		List<Article> clis = articleService.findAll();
 
