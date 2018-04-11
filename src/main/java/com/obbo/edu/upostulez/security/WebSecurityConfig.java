@@ -9,6 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -21,7 +22,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.obbo.edu.upostulez.ConstantsConfig;
+import com.obbo.edu.upostulez.config.ConstantsConfig;
 
 /**
  * Classe de configuration Spring Security - filtrage des acces selon ROLE -
@@ -33,6 +34,7 @@ import com.obbo.edu.upostulez.ConstantsConfig;
  */
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @ComponentScan(basePackageClasses = CustomUserDetailsService.class)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -57,7 +59,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.cors().and().csrf().disable()
 			.authorizeRequests()
 			.antMatchers(HttpMethod.POST, ConstantsConfig.SIGN_UP_URL).permitAll()
-//			.antMatchers(HttpMethod.POST, ConstantsConfig.LOGIN_URL).permitAll()
 			.anyRequest().authenticated()
 			.and()
 			.logout()

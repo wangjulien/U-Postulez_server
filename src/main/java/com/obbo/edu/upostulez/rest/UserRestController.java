@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.obbo.edu.upostulez.domain.User;
-import com.obbo.edu.upostulez.exception.UserNotFoundException;
+import com.obbo.edu.upostulez.exception.ResourceNotFoundException;
 import com.obbo.edu.upostulez.service.IUserService;
 
 /**
@@ -37,7 +37,7 @@ import com.obbo.edu.upostulez.service.IUserService;
 
 @RestController
 @RequestMapping("/users")
-@PreAuthorize("hasRole('ROLE_ADMIN')")
+@PreAuthorize("hasAuthority('WRITE_PRIVILEGE')")
 public class UserRestController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserRestController.class);
@@ -54,7 +54,7 @@ public class UserRestController {
 		LOGGER.info("Find a user by the id : " + userId);
 
 		User foundUser = userService.findById(userId)
-				.orElseThrow(() -> new UserNotFoundException("User with id : " + userId + " is not found"));
+				.orElseThrow(() -> new ResourceNotFoundException("User with id : " + userId + " is not found"));
 
 		LOGGER.info("User found : " + foundUser.getFirstName() + " " + foundUser.getLastName());
 

@@ -26,6 +26,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.obbo.edu.upostulez.domain.Article;
 import com.obbo.edu.upostulez.exception.ResourceNotFoundException;
 import com.obbo.edu.upostulez.hateoas.event.PaginatedResultsRetrievedEvent;
+import com.obbo.edu.upostulez.hateoas.event.ResourceCreatedEvent;
+import com.obbo.edu.upostulez.hateoas.event.SingleResourceRetrievedEvent;
 import com.obbo.edu.upostulez.service.IArticleService;
 
 /**
@@ -44,7 +46,7 @@ import com.obbo.edu.upostulez.service.IArticleService;
 
 @RestController
 @RequestMapping("/articles")
-@PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+@PreAuthorize("hasAuthority('READ_PRIVILEGE')")
 public class ArticleRestController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ArticleRestController.class);
@@ -60,12 +62,14 @@ public class ArticleRestController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Article> findArticleById(@PathVariable(value = "id") Long articleId) {
+	public ResponseEntity<Article> findArticleById(@PathVariable(value = "id") final Long articleId,
+			HttpServletResponse response) {
 		LOGGER.info("Find a article by the id : " + articleId);
 
 		Article foundArticle = articleService.findById(articleId)
 				.orElseThrow(() -> new ResourceNotFoundException("Article with id : " + articleId + " is not found"));
 
+		eventPublisher.publishEvent(new SingleResourceRetrievedEvent(this, response));
 		LOGGER.info("Article found : " + foundArticle.getName() + " " + foundArticle.getJianTiCi());
 
 		return ResponseEntity.ok(foundArticle);
@@ -80,12 +84,13 @@ public class ArticleRestController {
 	 *             Exception
 	 */
 	@PostMapping()
-	public ResponseEntity<Article> addArticle(@Valid @RequestBody Article article) {
+	public ResponseEntity<Article> addArticle(@Valid @RequestBody final Article article, HttpServletResponse response) {
 		LOGGER.info("New Article to create : Id=" + article.getId() + " " + article.getName() + " "
 				+ article.getJianTiCi());
 
 		articleService.create(article);
 
+		eventPublisher.publishEvent(new ResourceCreatedEvent(this, response, article.getId()));
 		LOGGER.info("Article added : Id=" + article.getId() + " " + article.getName() + " " + article.getJianTiCi());
 
 		return ResponseEntity.ok(article);

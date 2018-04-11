@@ -1,4 +1,4 @@
-package com.obbo.edu.upostulez;
+package com.obbo.edu.upostulez.config;
 
 /**
  * Classs de configuration. a charger depuis un fichier . properties - Pour

@@ -13,7 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-import com.obbo.edu.upostulez.ConstantsConfig;
+import com.obbo.edu.upostulez.config.ConstantsConfig;
 
 import io.jsonwebtoken.Jwts;
 

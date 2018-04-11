@@ -44,7 +44,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 		Optional<User> optUser = userRepo.findByEmail(email);
 
-		LOGGER.info("User login with email : ", email);
+		LOGGER.info("User login with email : {} ", email);
 
 		User user = optUser.orElseThrow(() -> {
 			String msg = "User can not be found by the email " + email;
@@ -52,17 +52,18 @@ public class CustomUserDetailsService implements UserDetailsService {
 			return new UsernameNotFoundException(msg);
 		});
 
-		LOGGER.info("User found in the DB ", user.getFirstName() + " " + user.getLastName());
+		LOGGER.info("User found in the DB : {} ", user.getFirstName() + " " + user.getLastName());
+
 		return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
 				getAuthorities(user.getRoles()));
 	}
 
-	private Collection<? extends GrantedAuthority> getAuthorities(Set<Role> roles) {
+	private final Collection<? extends GrantedAuthority> getAuthorities(final Set<Role> roles) {
 
 		return getGrantedAuthorities(getPrivileges(roles));
 	}
 
-	private Set<PrivilegeName> getPrivileges(Set<Role> roles) {
+	private final Set<PrivilegeName> getPrivileges(final Set<Role> roles) {
 
 		Set<Privilege> allPrivileges = new HashSet<>();
 		for (Role role : roles) {
@@ -72,7 +73,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 		return allPrivileges.stream().map(Privilege::getName).collect(Collectors.toSet());
 	}
 
-	private Set<GrantedAuthority> getGrantedAuthorities(Set<PrivilegeName> privileges) {
+	private final Set<GrantedAuthority> getGrantedAuthorities(final Set<PrivilegeName> privileges) {
 		Set<GrantedAuthority> authorities = new HashSet<>();
 		for (PrivilegeName privilege : privileges) {
 			authorities.add(new SimpleGrantedAuthority(privilege.toString()));

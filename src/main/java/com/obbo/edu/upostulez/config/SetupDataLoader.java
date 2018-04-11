@@ -1,4 +1,4 @@
-package com.obbo.edu.upostulez;
+package com.obbo.edu.upostulez.config;
 
 import java.util.Optional;
 import java.util.Set;
@@ -50,20 +50,28 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 		Privilege writePrivilege = createPrivilegeIfNotFound(PrivilegeName.WRITE_PRIVILEGE);
 
 		Set<Privilege> adminPrivileges = Stream.of(readPrivilege, writePrivilege).collect(Collectors.toSet());
-//		Set<Privilege> userPrivileges = Stream.of(readPrivilege).collect(Collectors.toSet());
+		Set<Privilege> userPrivileges = Stream.of(readPrivilege).collect(Collectors.toSet());
 				
 		Role adminRole = createRoleIfNotFound(RoleName.ROLE_ADMIN, adminPrivileges);
-//		Role userRole = createRoleIfNotFound(RoleName.ROLE_USER, userPrivileges);
+		Role userRole = createRoleIfNotFound(RoleName.ROLE_USER, userPrivileges);
 
-		User user = new User();
-		user.setFirstName("Admin");
-		user.setLastName("ADMIN");
-		user.setEmail("test@test.com");
-		user.setPassword(passwordEncoder.encode("test"));
-		user.addRole(adminRole);
-		user.setAddress(new Address("Paris", 75001, "IdF", "0123456789"));
+		User adminUser = new User();
+		adminUser.setFirstName("Admin");
+		adminUser.setLastName("ADMIN");
+		adminUser.setEmail("test@test.com");
+		adminUser.setPassword(passwordEncoder.encode("test"));
+		adminUser.addRole(adminRole);
+		adminUser.setAddress(new Address("Paris", 75001, "IdF", "0123456789"));
+		createUserIfNotFound(adminUser);
 		
-		createUserIfNotFound(user);
+		User normUser = new User();
+		normUser.setFirstName("Guest");
+		normUser.setLastName("GUEST");
+		normUser.setEmail("guest@test.com");
+		normUser.setPassword(passwordEncoder.encode("test"));
+		normUser.addRole(userRole);
+		normUser.setAddress(new Address("Paris", 75001, "IdF", "0123456789"));
+		createUserIfNotFound(normUser);
 
 		alreadySetup = true;
 	}

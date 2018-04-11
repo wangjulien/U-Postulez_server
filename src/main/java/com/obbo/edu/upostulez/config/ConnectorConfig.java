@@ -1,4 +1,4 @@
-package com.obbo.edu.upostulez;
+package com.obbo.edu.upostulez.config;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.connector.Connector;
