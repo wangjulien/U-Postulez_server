@@ -1,6 +1,6 @@
 package com.obbo.edu.upostulez.exception;
 
-public class UserAlreadyExistException extends Exception {
+public class UserAlreadyExistException extends RuntimeException {
 
 	/**
 	 * 

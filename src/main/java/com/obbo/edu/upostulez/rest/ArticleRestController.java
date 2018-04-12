@@ -34,8 +34,7 @@ import com.obbo.edu.upostulez.service.IArticleService;
  * Classe qui regroupe tous les traitements concernant un Conseiller courrant. -
  * Ajouter un Article - Recuperer un Article par son ID, lire toutes ces
  * informations (data) - Modifier un Article - Supprimer un Article - Lister
- * tous les Article dans persistence - ToDo : simulationCredit et
- * gestionPatrimoine
+ * tous les Article dans persistence - T
  * 
  * DaoArticle est utilise ici pour Chercher ou Modifier l'information dans
  * persistance *
@@ -60,7 +59,17 @@ public class ArticleRestController {
 	public ArticleRestController() {
 		super();
 	}
+	
+	
+	//
+	// CRUD
+	//
 
+	/**
+	 * @param articleId
+	 * @param response
+	 * @return
+	 */
 	@GetMapping("/{id}")
 	public ResponseEntity<Article> findArticleById(@PathVariable(value = "id") final Long articleId,
 			HttpServletResponse response) {

@@ -6,4 +6,6 @@ import com.obbo.edu.upostulez.exception.UserAlreadyExistException;
 public interface IUserService extends ICrudService<User> {
 
 	public User registerNewUserAccount(User newUser) throws UserAlreadyExistException;
+
+	public void createVerificationTokenForUser(User user, String token);
 }
