@@ -1,24 +1,25 @@
 package com.obbo.edu.upostulez.security;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import com.obbo.edu.upostulez.config.ConstantsConfig;
-
-import io.jsonwebtoken.Jwts;
+import com.obbo.edu.upostulez.service.JwtTokenService;
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
-
+	
+	@Autowired
+	private JwtTokenService jwtTokenService;
+	
 	public JWTAuthorizationFilter(AuthenticationManager authManager) {
 		super(authManager);
 	}
@@ -26,31 +27,14 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
 			throws IOException, ServletException {
-		String header = req.getHeader(ConstantsConfig.HEADER_STRING);
+		String jwtToken = req.getHeader(ConstantsConfig.HEADER_STRING);
 
-		if (header == null || !header.startsWith(ConstantsConfig.TOKEN_PREFIX)) {
+		if (jwtToken == null || !jwtToken.startsWith(ConstantsConfig.TOKEN_PREFIX)) {
 			chain.doFilter(req, res);
 			return;
 		}
 
-		UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
-
-		SecurityContextHolder.getContext().setAuthentication(authentication);
+		SecurityContextHolder.getContext().setAuthentication(jwtTokenService.decodeJwtToken(jwtToken));
 		chain.doFilter(req, res);
-	}
-
-	private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-		String token = request.getHeader(ConstantsConfig.HEADER_STRING);
-		if (token != null) {
-			// parse the token.
-			String user = Jwts.parser().setSigningKey(ConstantsConfig.SECRET.getBytes()).parseClaimsJws(token.replace(ConstantsConfig.TOKEN_PREFIX, ""))
-					.getBody().getSubject();
-
-			if (user != null) {
-				return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
-			}
-			return null;
-		}
-		return null;
 	}
 }

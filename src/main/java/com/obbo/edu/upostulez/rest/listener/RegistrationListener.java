@@ -14,7 +14,9 @@ import com.obbo.edu.upostulez.rest.event.OnRegistrationCompleteEvent;
 import com.obbo.edu.upostulez.service.IUserService;
 
 public class RegistrationListener implements ApplicationListener<OnRegistrationCompleteEvent> {
-
+	
+	private static final String REG_CONFIRM_PATH = "/registrationConfirm?token=";
+	
 	@Value("${support.email}")
 	private String supportEmail;
 
@@ -49,7 +51,7 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
 			final String token) {
 		final String recipientAddress = user.getEmail();
 		final String subject = "Registration Confirmation";
-		final String confirmationUrl = event.getAppUrl() + "/registrationConfirm.html?token=" + token;
+		final String confirmationUrl = event.getAppUrl() + REG_CONFIRM_PATH + token;
 		final String message = messages.getMessage("message.regSucc", null, event.getLocale());
 		final SimpleMailMessage email = new SimpleMailMessage();
 		email.setTo(recipientAddress);

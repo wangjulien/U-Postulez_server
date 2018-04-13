@@ -1,8 +1,6 @@
 package com.obbo.edu.upostulez.security;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -20,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.obbo.edu.upostulez.domain.Privilege;
 import com.obbo.edu.upostulez.domain.Role;
 import com.obbo.edu.upostulez.domain.User;
-import com.obbo.edu.upostulez.protocol.DbEntityProtocol.PrivilegeName;
 import com.obbo.edu.upostulez.repository.UserRepository;
 
 /**
@@ -41,12 +38,9 @@ public class CustomUserDetailsService implements UserDetailsService {
 	@Override
 	@Transactional(readOnly = true)
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-
-		Optional<User> optUser = userRepo.findByEmail(email);
-
 		LOGGER.info("User login with email : {} ", email);
 
-		User user = optUser.orElseThrow(() -> {
+		User user = userRepo.findByEmail(email).orElseThrow(() -> {
 			String msg = "User can not be found by the email " + email;
 			LOGGER.error(msg);
 			return new UsernameNotFoundException(msg);
@@ -55,29 +49,16 @@ public class CustomUserDetailsService implements UserDetailsService {
 		LOGGER.info("User found in the DB : {} ", user.getFirstName() + " " + user.getLastName());
 
 		return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
-				getAuthorities(user.getRoles()));
+				user.isEnabled(), true, true, true, getAuthorities(user.getRoles()));
 	}
 
 	private final Collection<? extends GrantedAuthority> getAuthorities(final Set<Role> roles) {
-
-		return getGrantedAuthorities(getPrivileges(roles));
-	}
-
-	private final Set<PrivilegeName> getPrivileges(final Set<Role> roles) {
-
-		Set<Privilege> allPrivileges = new HashSet<>();
-		for (Role role : roles) {
-			allPrivileges.addAll(role.getPrivileges());
-		}
-
-		return allPrivileges.stream().map(Privilege::getName).collect(Collectors.toSet());
-	}
-
-	private final Set<GrantedAuthority> getGrantedAuthorities(final Set<PrivilegeName> privileges) {
-		Set<GrantedAuthority> authorities = new HashSet<>();
-		for (PrivilegeName privilege : privileges) {
-			authorities.add(new SimpleGrantedAuthority(privilege.toString()));
-		}
+		
+		Set<Privilege> privileges = roles.stream().map(role -> role.getPrivileges()).flatMap(s -> s.stream())
+				.collect(Collectors.toSet());
+		Set<GrantedAuthority> authorities = privileges.stream().map(p -> new SimpleGrantedAuthority(p.getName().toString()))
+				.collect(Collectors.toSet());
+		
 		return authorities;
 	}
 }
