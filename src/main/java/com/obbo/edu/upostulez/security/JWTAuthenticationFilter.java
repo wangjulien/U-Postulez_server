@@ -17,14 +17,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.obbo.edu.upostulez.config.ConstantsConfig;
-import com.obbo.edu.upostulez.service.JwtTokenService;
+import com.obbo.edu.upostulez.domain.User;
+import com.obbo.edu.upostulez.service.IJwtTokenService;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-	
+
 	@Autowired
-	private JwtTokenService jwtTokenService;
-	
+	private IJwtTokenService jwtTokenService;
+
 	public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
 		setAuthenticationManager(authenticationManager);
 	}
@@ -33,7 +33,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res)
 			throws AuthenticationException {
 		try {
-			UserDetails creds = new ObjectMapper().readValue(req.getInputStream(), CustomUserDetails.class);
+			UserDetails creds = new ObjectMapper().readValue(req.getInputStream(), User.class);
 
 			return getAuthenticationManager().authenticate(
 					new UsernamePasswordAuthenticationToken(creds.getUsername(), creds.getPassword(), new HashSet<>()));
@@ -45,8 +45,16 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	@Override
 	protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain chain,
 			Authentication auth) throws IOException, ServletException {
-				
-		res.addHeader(ConstantsConfig.HEADER_STRING, ConstantsConfig.TOKEN_PREFIX + jwtTokenService.buildJwtToken(auth));
-		res.addHeader(ConstantsConfig.HEADER_ACCESS, ConstantsConfig.HEADER_STRING);
+
+		jwtTokenService.addJwtTokenToResponse(auth, res);
 	}
+
+	@Override
+	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+			AuthenticationException failed) throws IOException, ServletException {
+		// TODO Auto-generated method stub
+		super.unsuccessfulAuthentication(request, response, failed);
+	}
+	
+	
 }

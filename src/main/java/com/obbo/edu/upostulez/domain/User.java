@@ -1,6 +1,6 @@
 package com.obbo.edu.upostulez.domain;
 
-import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,6 +14,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -28,7 +32,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(value = { "password" }, allowSetters = true)
 @Entity
 @Table(name = "user")
-public class User implements Serializable {
+public class User implements UserDetails {
 
 	/**
 	 * 
@@ -54,7 +58,10 @@ public class User implements Serializable {
 	@ManyToMany
 	@JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
 	private Set<Role> roles = new HashSet<>();
-
+	
+	@Transient
+	private Set<GrantedAuthority> setAuths;
+	
 	public User() {
 		super();
 	}
@@ -91,6 +98,11 @@ public class User implements Serializable {
 		this.address = address;
 	}
 
+	@Override
+	public String getUsername() {
+		return email;
+	}
+
 	public String getEmail() {
 		return email;
 	}
@@ -98,7 +110,8 @@ public class User implements Serializable {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-
+	
+	@Override
 	public String getPassword() {
 		return password;
 	}
@@ -107,6 +120,7 @@ public class User implements Serializable {
 		this.password = password;
 	}
 	
+	@Override
 	public boolean isEnabled() {
 		return enabled;
 	}
@@ -128,6 +142,29 @@ public class User implements Serializable {
 		this.roles = roles;
 	}
 
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return setAuths;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

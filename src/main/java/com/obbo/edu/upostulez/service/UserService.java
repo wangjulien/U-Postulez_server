@@ -1,13 +1,18 @@
 package com.obbo.edu.upostulez.service;
 
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.obbo.edu.upostulez.domain.Privilege;
 import com.obbo.edu.upostulez.domain.User;
 import com.obbo.edu.upostulez.domain.VerificationToken;
 import com.obbo.edu.upostulez.exception.UserAlreadyExistException;
@@ -39,6 +44,11 @@ public class UserService extends AbstractService<User> implements IUserService {
 	}
 
 	@Override
+	public Optional<User> findByEmail(String email) {
+		return userRepository.findByEmail(email);
+	}
+
+	@Override
 	public User registerNewUserAccount(User newUser) {
 
 		if (userRepository.findByEmail(newUser.getEmail()).isPresent()) {
@@ -59,15 +69,15 @@ public class UserService extends AbstractService<User> implements IUserService {
 	@Override
 	public TokenState validateVerificationToken(String token) {
 		Optional<VerificationToken> optVerificationToken = tokenRepository.findByToken(token);
-		
-		if ( !optVerificationToken.isPresent() ) {
+
+		if (!optVerificationToken.isPresent()) {
 			return TokenState.TOKEN_INVALID;
 		}
-		
+
 		VerificationToken verificationToken = optVerificationToken.get();
-		
+
 		final User user = verificationToken.getUser();
-		if ( verificationToken.isExpired() ) {
+		if (verificationToken.isExpired()) {
 			tokenRepository.delete(verificationToken);
 			return TokenState.TOKEN_EXPIRED;
 		}
@@ -79,7 +89,15 @@ public class UserService extends AbstractService<User> implements IUserService {
 	}
 
 	@Override
-	public User getUser(String token) {
+	public User getUserFromToken(String token) {
 		return tokenRepository.findByToken(token).orElseThrow(IllegalStateException::new).getUser();
+	}
+
+	@Override
+	public Set<GrantedAuthority> getAuthoritiesFromUser(User user) {
+		Set<Privilege> privileges = user.getRoles().stream().map(role -> role.getPrivileges()).flatMap(s -> s.stream())
+				.collect(Collectors.toSet());
+		return privileges.stream().map(p -> new SimpleGrantedAuthority(p.getName().toString()))
+				.collect(Collectors.toSet());
 	}
 }

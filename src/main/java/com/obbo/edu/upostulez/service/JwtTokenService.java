@@ -5,11 +5,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.obbo.edu.upostulez.config.ConstantsConfig;
 
@@ -17,9 +19,16 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
-@Component
-public class JwtTokenService {
+@Service
+public class JwtTokenService implements IJwtTokenService{
 	
+	@Override
+	public void addJwtTokenToResponse(final Authentication auth, final HttpServletResponse response) {
+		response.addHeader(ConstantsConfig.HEADER_STRING, ConstantsConfig.TOKEN_PREFIX + buildJwtToken(auth));
+		response.addHeader(ConstantsConfig.HEADER_ACCESS, ConstantsConfig.HEADER_STRING);
+	}
+	
+	@Override
 	public String buildJwtToken(final Authentication auth) {
 		Claims claims = Jwts.claims().setSubject(auth.getName());
 		claims.put("authorities", auth.getAuthorities().stream().map(s -> s.toString()).collect(Collectors.toList()));
@@ -29,6 +38,7 @@ public class JwtTokenService {
 				.signWith(SignatureAlgorithm.HS512, ConstantsConfig.SECRET.getBytes()).compact();
 	}
 	
+	@Override
 	public Authentication decodeJwtToken(final String jwtToken) {
 		Claims jwsClaims = Jwts.parser().setSigningKey(ConstantsConfig.SECRET.getBytes())
 				.parseClaimsJws(jwtToken.replace(ConstantsConfig.TOKEN_PREFIX, "")).getBody();
