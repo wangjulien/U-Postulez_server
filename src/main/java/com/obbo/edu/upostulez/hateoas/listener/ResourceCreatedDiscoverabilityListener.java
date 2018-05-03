@@ -1,6 +1,7 @@
 package com.obbo.edu.upostulez.hateoas.listener;
 
 import java.net.URI;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -9,7 +10,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.google.common.base.Preconditions;
 import com.obbo.edu.upostulez.hateoas.event.ResourceCreatedEvent;
 
 @Component
@@ -17,7 +17,7 @@ class ResourceCreatedDiscoverabilityListener implements ApplicationListener<Reso
 
 	@Override
 	public void onApplicationEvent(final ResourceCreatedEvent resourceCreatedEvent) {
-		Preconditions.checkNotNull(resourceCreatedEvent);
+		Objects.requireNonNull(resourceCreatedEvent, "ResourceCreatedEvent is null");
 
 		final HttpServletResponse response = resourceCreatedEvent.getResponse();
 		final long idOfNewResource = resourceCreatedEvent.getIdOfNewResource();

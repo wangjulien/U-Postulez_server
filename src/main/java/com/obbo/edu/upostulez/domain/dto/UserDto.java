@@ -1,4 +1,6 @@
-package com.obbo.edu.upostulez.domain;
+package com.obbo.edu.upostulez.domain.dto;
+
+import com.obbo.edu.upostulez.validation.ValidPassword;
 
 public class UserDto {
 	private Long id;
@@ -7,6 +9,8 @@ public class UserDto {
     private String lastName;
     
 	private String email;
+	
+	@ValidPassword
 	private String password;
 	
 	public UserDto() {

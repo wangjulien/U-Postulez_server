@@ -2,6 +2,7 @@ package com.obbo.edu.upostulez.service;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,18 +39,24 @@ public class UserService extends AbstractService<User> implements IUserService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	
+	
+	public UserService() {
+		super();
+	}
+
 	@Override
 	protected PagingAndSortingRepository<User, Long> getDao() {
 		return userRepository;
 	}
 
 	@Override
-	public Optional<User> findByEmail(String email) {
+	public Optional<User> findByEmail(final String email) {
 		return userRepository.findByEmail(email);
 	}
 
 	@Override
-	public User registerNewUserAccount(User newUser) {
+	public User registerNewUserAccount(final User newUser) {
 
 		if (userRepository.findByEmail(newUser.getEmail()).isPresent()) {
 			throw new UserAlreadyExistException("There is an account with that email adress: " + newUser.getEmail());
@@ -61,13 +68,13 @@ public class UserService extends AbstractService<User> implements IUserService {
 	}
 
 	@Override
-	public void createVerificationTokenForUser(User user, String token) {
+	public void createVerificationTokenForUser(final User user, final String token) {
 		final VerificationToken myToken = new VerificationToken(token, user);
 		tokenRepository.save(myToken);
 	}
 
 	@Override
-	public TokenState validateVerificationToken(String token) {
+	public TokenState validateVerificationToken(final String token) {
 		Optional<VerificationToken> optVerificationToken = tokenRepository.findByToken(token);
 
 		if (!optVerificationToken.isPresent()) {
@@ -89,15 +96,35 @@ public class UserService extends AbstractService<User> implements IUserService {
 	}
 
 	@Override
-	public User getUserFromToken(String token) {
+	public User getUserFromToken(final String token) {
 		return tokenRepository.findByToken(token).orElseThrow(IllegalStateException::new).getUser();
 	}
 
 	@Override
-	public Set<GrantedAuthority> getAuthoritiesFromUser(User user) {
+	public Set<GrantedAuthority> getAuthoritiesFromUser(final User user) {
 		Set<Privilege> privileges = user.getRoles().stream().map(role -> role.getPrivileges()).flatMap(s -> s.stream())
 				.collect(Collectors.toSet());
 		return privileges.stream().map(p -> new SimpleGrantedAuthority(p.getName().toString()))
 				.collect(Collectors.toSet());
+	}
+
+	@Override
+	public VerificationToken generateNewVerificationToken(final String existingToken) {
+		VerificationToken vToken = tokenRepository.findByToken(existingToken).get();
+		vToken.updateToken(UUID.randomUUID().toString());
+		vToken = tokenRepository.save(vToken);
+		return vToken;
+	}
+
+	@Override
+	public void createPasswordResetTokenForUser(User user, String token) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void changeUserPassword(User user, String newPassword) {
+		// TODO Auto-generated method stub
+		
 	}
 }

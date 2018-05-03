@@ -1,5 +1,7 @@
 package com.obbo.edu.upostulez.hateoas.listener;
 
+import java.util.Objects;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.context.ApplicationListener;
@@ -7,7 +9,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.google.common.base.Preconditions;
 import com.obbo.edu.upostulez.hateoas.LinkUtil;
 import com.obbo.edu.upostulez.hateoas.event.PaginatedResultsRetrievedEvent;
 
@@ -26,7 +27,7 @@ class PaginatedResultsRetrievedDiscoverabilityListener implements ApplicationLis
 
 	@Override
 	public final void onApplicationEvent(final PaginatedResultsRetrievedEvent ev) {
-		Preconditions.checkNotNull(ev);
+		Objects.requireNonNull(ev, "PaginatedResultsRetrievedEvent is null");
 
 		addLinkHeaderOnPagedResourceRetrieval(ev.getUriBuilder(), ev.getResponse(), ev.getClazz(), ev.getPage(),
 				ev.getTotalPages(), ev.getPageSize());
