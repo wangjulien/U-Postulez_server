@@ -22,8 +22,10 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -67,7 +69,21 @@ public class RegistrationController {
 
 	@Autowired
 	private ApplicationEventPublisher eventPublisher;
+	
+	@GetMapping("/auth/{email}")
+	public ResponseEntity<User> getUserByEmail(@PathVariable(value = "email") String email) {
 
+		User foundUser = userService.findByEmail(email).orElseThrow(() -> {
+			String msg = "User can not be found by the email " + email;
+			LOGGER.error(msg);
+			return new UsernameNotFoundException(msg);
+		});
+		
+		LOGGER.info("Login successful : " + foundUser.getFirstName() + " " + foundUser.getLastName());
+
+		return ResponseEntity.ok(foundUser);
+	}
+	
 
 	@PostMapping("/user/registration")
 	public ResponseEntity<User> registerUserAccount(@Valid final UserDto accountDto, final HttpServletRequest request) {

@@ -6,10 +6,8 @@ import org.springframework.security.core.Authentication;
 
 public interface IJwtTokenService {
 
-	void addJwtTokenToResponse(Authentication auth, HttpServletResponse response);
+	public void addJwtTokenToResponse(Authentication auth, HttpServletResponse response);
 
-	String buildJwtToken(Authentication auth);
-
-	Authentication decodeJwtToken(String jwtToken);
+	public Authentication decodeJwtToken(String jwtToken);
 
 }

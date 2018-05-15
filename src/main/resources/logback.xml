@@ -3,7 +3,7 @@
 <configuration scan="true" scanPeriod="30 seconds">
 
 	<property name="LOG_HOME" value="./logs" />
-	<property name="LOG_NAME" value="proxi_banque" />
+	<property name="LOG_NAME" value="u_postulez" />
 
 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
@@ -36,8 +36,8 @@
 
 	<root level="info">
 		<!-- uncomment file -->
-<!-- 		<appender-ref ref="file"/> -->
-		<appender-ref ref="console" />
+		<appender-ref ref="file"/>
+<!-- 		<appender-ref ref="console" /> -->
 	</root>
 
 </configuration>

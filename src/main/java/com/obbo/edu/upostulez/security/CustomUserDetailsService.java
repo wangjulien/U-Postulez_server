@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.obbo.edu.upostulez.domain.User;
@@ -19,6 +20,7 @@ import com.obbo.edu.upostulez.service.IUserService;
  *
  */
 
+@Component
 public class CustomUserDetailsService implements UserDetailsService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomUserDetailsService.class);

@@ -43,14 +43,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	private static final String HTTP = "http://";
 	private static final String HTTPS = "https://";
 	private static final String DEV_PORT = ":4200";
-	private static final String HTTPS_PORT = ":443";
+	private static final String HTTPS_PORT = ":8443";
 
 	@Autowired
-	UserDetailsService customUserDetailsService;
+	private UserDetailsService customUserDetailsService;
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
@@ -68,8 +67,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.logoutUrl("/logout")
 				.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
 			.and()
-			.addFilter(new JWTAuthenticationFilter(authenticationManager()))
-			.addFilter(new JWTAuthorizationFilter(authenticationManager()))
+			.addFilter(jwtAuthenticationFilter())
+			.addFilter(jwtAuthorizationFilter())
 			// this disables session creation on Spring Security
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
@@ -78,14 +77,32 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration corsConf = new CorsConfiguration();
+
+		// Dev Option
+//		corsConf.addAllowedOrigin("*");
+		
 		corsConf.setAllowedOrigins(Arrays.asList(HTTP + corsPermitHost + DEV_PORT, HTTPS + corsPermitHost,
 				HTTPS + corsPermitHost + HTTPS_PORT));
-		// Dev Option
-		corsConf.addAllowedOrigin("*");
 		corsConf.setAllowedMethods(
 				Arrays.asList(HttpMethod.GET.toString(), HttpMethod.POST.toString(), HttpMethod.DELETE.toString()));
+		
+		corsConf.setAllowCredentials(true);
+		// setAllowedHeaders is important! Without it, OPTIONS preflight request will fail with 403 Invalid CORS request
+		corsConf.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+		
 		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", corsConf);
+		
 		return source;
+	}
+	
+	@Bean
+	public JWTAuthenticationFilter jwtAuthenticationFilter() throws Exception {
+		return new JWTAuthenticationFilter(authenticationManager());
+	}
+	
+	@Bean
+	public JWTAuthorizationFilter jwtAuthorizationFilter() throws Exception {
+		return new JWTAuthorizationFilter(authenticationManager());
 	}
 }

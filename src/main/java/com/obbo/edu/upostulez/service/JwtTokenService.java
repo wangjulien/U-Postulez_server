@@ -29,16 +29,6 @@ public class JwtTokenService implements IJwtTokenService{
 	}
 	
 	@Override
-	public String buildJwtToken(final Authentication auth) {
-		Claims claims = Jwts.claims().setSubject(auth.getName());
-		claims.put("authorities", auth.getAuthorities().stream().map(s -> s.toString()).collect(Collectors.toList()));
-
-		return Jwts.builder().setClaims(claims)
-				.setExpiration(new Date(System.currentTimeMillis() + ConstantsConfig.EXPIRATION_TIME))
-				.signWith(SignatureAlgorithm.HS512, ConstantsConfig.SECRET.getBytes()).compact();
-	}
-	
-	@Override
 	public Authentication decodeJwtToken(final String jwtToken) {
 		Claims jwsClaims = Jwts.parser().setSigningKey(ConstantsConfig.SECRET.getBytes())
 				.parseClaimsJws(jwtToken.replace(ConstantsConfig.TOKEN_PREFIX, "")).getBody();
@@ -55,5 +45,14 @@ public class JwtTokenService implements IJwtTokenService{
 		}
 
 		return null;
+	}
+	
+	private String buildJwtToken(final Authentication auth) {
+		Claims claims = Jwts.claims().setSubject(auth.getName());
+		claims.put("authorities", auth.getAuthorities().stream().map(s -> s.toString()).collect(Collectors.toList()));
+
+		return Jwts.builder().setClaims(claims)
+				.setExpiration(new Date(System.currentTimeMillis() + ConstantsConfig.EXPIRATION_TIME))
+				.signWith(SignatureAlgorithm.HS512, ConstantsConfig.SECRET.getBytes()).compact();
 	}
 }
