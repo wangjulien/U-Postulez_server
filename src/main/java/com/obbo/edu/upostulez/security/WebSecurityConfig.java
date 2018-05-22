@@ -78,13 +78,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration corsConf = new CorsConfiguration();
 
+		corsConf.setAllowedOrigins(Arrays.asList(
+				HTTP + corsPermitHost + DEV_PORT, 
+				HTTP + corsPermitHost,
+				HTTPS + corsPermitHost,
+				HTTPS + corsPermitHost + HTTPS_PORT));
 		// Dev Option
 //		corsConf.addAllowedOrigin("*");
 		
-		corsConf.setAllowedOrigins(Arrays.asList(HTTP + corsPermitHost + DEV_PORT, HTTPS + corsPermitHost,
-				HTTPS + corsPermitHost + HTTPS_PORT));
-		corsConf.setAllowedMethods(
-				Arrays.asList(HttpMethod.GET.toString(), HttpMethod.POST.toString(), HttpMethod.DELETE.toString()));
+		corsConf.setAllowedMethods(Arrays.asList("*"));
 		
 		corsConf.setAllowCredentials(true);
 		// setAllowedHeaders is important! Without it, OPTIONS preflight request will fail with 403 Invalid CORS request
